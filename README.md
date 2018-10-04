@@ -1,7 +1,7 @@
 # firebase-auth-spa
 
 [![Build Status](https://travis-ci.org/katsu-o/firebase-auth-spa.svg?branch=master)](https://travis-ci.org/katsu-o/firebase-auth-spa)
-[![Maintainability](https://api.codeclimate.com/v1/badges/cd33c116cd0e43fcfb35/maintainability)](https://codeclimate.com/github/katsu-o/firebase-auth-spa/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/4f7b0920ea92cf431bed/maintainability)](https://codeclimate.com/github/katsu-o/firebase-auth-spa/maintainability)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An example app(SPA: React/Typescript) of Firebase Authentication.
