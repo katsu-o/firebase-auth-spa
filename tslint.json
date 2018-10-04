@@ -1,0 +1,37 @@
+{
+  "defaultSeverity": "error",
+  "rulesDirectory": ["tslint-plugin-prettier"],
+  "extends": ["tslint:latest", "tslint-react", "tslint-config-airbnb", "tslint-config-prettier"],
+  "linterOptions": {
+    "exclude": ["config/**/*.js", "node_modules/**/*.ts", "coverage/lcov-report/*.js"]
+  },
+  "rules": {
+    "prettier": [
+      true,
+      {
+        "semi": true,
+        "singleQuote": true,
+        "printWidth": 120,
+        "trailingComma": "es5"
+      }
+    ],
+    "no-console": false, // console のメソッドを許容しない
+    "variable-name": [
+      true, // 変数名をチェックする
+      "ban-keywords", // 予約語の禁止
+      "check-format", // lowerCamel と UPPER_SNAKE を許容
+      "allow-pascal-case", // UpperCamel を許容
+      "allow-leading-underscore" // 先頭の underscore を許容
+    ],
+    "import-name": false, // import 名の制約 #tslint-microsoft-contrib
+    "ordered-imports": false, // import の順序指定
+    "interface-name": false, // インターフェース名の制約(Iから始める)
+    "no-empty-interface": false, // 空の Interface を許容しない
+    "object-literal-sort-keys": false, // オブジェクトリテラルのキーをアルファベット順に並べることを強制する
+    "object-literal-shorthand": false, // オブジェクトリテラルの省略記法を推奨する
+    // "jsx-no-lambda": false, // jsx 内での lambda の使用を許容しない
+    "no-submodule-imports": [true, "redux-saga/effects", "@material-ui/core"], // サブモジュールの import を許容しない
+    "array-type": [true, "array"]
+  },
+  "jsRules": {}
+}

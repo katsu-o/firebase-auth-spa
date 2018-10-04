@@ -1,0 +1,29 @@
+language: node_js
+
+node_js:
+  - 10.11.0
+
+cache: yarn
+
+install:
+  - yarn global add firebase-tools
+  - yarn install
+
+after_success:
+  - firebase use $FIREBASE_PROJECT
+  - firebase deploy --token $FIREBASE_TOKEN
+
+branches:
+  only:
+    - master
+
+script:
+  - yarn build
+  - echo "Deploy"
+
+deploy:
+  provider: firebase
+  skip_cleanup: true
+  token:
+    secure: $FIREBASE_TOKEN
+  project: $FIREBASE_PROJECT
