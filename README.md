@@ -4,13 +4,13 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/4f7b0920ea92cf431bed/maintainability)](https://codeclimate.com/github/katsu-o/firebase-auth-spa/maintainability)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An example app(SPA: React/Typescript) of Firebase Authentication.
+An example app(SPA: React/TypeScript) of Firebase Authentication.
 
 ## Description
 
 This is an exapmle app(SPA) of Firebase Authentication.
 
-This app(SPA) is created using React with Typescript, scaffolding by CRA(create-react-app).
+This app(SPA) is created using React with TypeScript, scaffolding by CRA(create-react-app).
 
 ## Prerequisites
 
