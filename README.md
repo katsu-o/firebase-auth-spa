@@ -23,7 +23,7 @@ This app(SPA) is created using React with Typescript, scaffolding by CRA(create-
 
 ## Requirement
 
-(operability confirmed version)
+(confirmed version)
 
 - Node >= 10.7.0
 - npm >= 6.1.0
