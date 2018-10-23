@@ -50,7 +50,10 @@ class HomePage extends React.Component<Props, State> {
 
     return (
       <div className={this.props.classes.root}>
-        <Typography variant="display1" gutterBottom={true}>
+        <Typography variant="subtitle1" gutterBottom={true}>
+          Home
+        </Typography>
+        <Typography variant="subheading" gutterBottom={true}>
           Hi, {email}
         </Typography>
       </div>

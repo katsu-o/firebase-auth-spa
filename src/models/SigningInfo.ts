@@ -1,8 +1,9 @@
-import { Provider } from './Provider';
+import { AuthProvider } from './AuthProvider';
 
 export interface ISigningInfo {
-  email: string;
-  password: string;
-  provider: Provider | '';
+  userName: string | null;
+  email: string | null;
+  password: string | null;
+  authProvider: AuthProvider | null;
 }
 export type SigningInfo = ISigningInfo | null;

@@ -3,4 +3,4 @@ export interface ILinkInfo {
   password?: string;
   credential: firebase.auth.AuthCredential;
 }
-export type aLinkInfo = ILinkInfo | null;
+export type LinkInfo = ILinkInfo | null;

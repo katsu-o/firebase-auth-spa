@@ -10,6 +10,9 @@ const theme = createMuiTheme({
     secondary: green,
     error: red,
   },
+  typography: {
+    useNextVariants: true,
+  },
 });
 
 const withRoot = <P extends {}>(Component: React.ComponentType<P>) => {

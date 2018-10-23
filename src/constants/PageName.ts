@@ -1,7 +1,10 @@
 enum PageName {
   TOP = '/',
+  SIGNUP = '/signup',
   SIGNIN = '/signin',
+  PASSWORDRESET = '/passwordreset',
   HOME = '/home',
+  SETTINGS = '/settings',
 }
 
 export const toPublicUrl = (page: PageName, ...params: []) => {

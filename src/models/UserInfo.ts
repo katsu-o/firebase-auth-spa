@@ -1,5 +1,6 @@
 export interface IUserInfo extends firebase.UserInfo {
-  providerData: () => (firebase.UserInfo | null)[];
+  providerData?: (firebase.UserInfo | null)[];
+  emailVerified?: boolean;
 }
 export type UserInfo = IUserInfo | null;
 

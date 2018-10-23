@@ -31,6 +31,7 @@ import { ISigningInfo } from '../models/SigningInfo';
 import { UserInfo, toProviderIds } from '../models/UserInfo';
 import { AuthProvider } from '../models/AuthProvider';
 import IconUtil from '../utilities/IconUtil';
+import { isGmail } from '../utilities/misc';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -49,7 +50,7 @@ const styles = (theme: Theme) =>
       backgroundColor: theme.palette.grey[400],
     },
     avatarSuccess: {
-      backgroundColor: theme.palette.primary.main,
+      backgroundColor: theme.palette.secondary.main,
     },
     form: {
       width: '100%', // Fix IE11 issue.
@@ -58,6 +59,11 @@ const styles = (theme: Theme) =>
     provider: {
       marginTop: theme.spacing.unit,
       textTransform: 'none',
+    },
+    providerHidden: {
+      marginTop: theme.spacing.unit,
+      textTransform: 'none',
+      display: 'none',
     },
     submit: {
       marginTop: theme.spacing.unit,
@@ -70,7 +76,7 @@ const styles = (theme: Theme) =>
       position: 'relative',
     },
     fabProgress: {
-      color: theme.palette.primary.light,
+      color: theme.palette.secondary.light,
       position: 'absolute',
       top: 5,
       left: -4,
@@ -92,10 +98,8 @@ const styles = (theme: Theme) =>
 interface IOwnProps extends WithStyles<typeof styles> {
   authenticatedUser: UserInfo;
   authenticatedUserTimestamp?: number;
-  onSignIn: (signing: ISigningInfo) => void;
-  onGoPasswordReset: () => void;
-  onNavigateAfterSignedIn: () => void;
-  authProviders: AuthProvider[];
+  onSignUp: (signing: ISigningInfo) => void;
+  onNavigateAfterSignedUp: () => void;
   submitting?: boolean;
 }
 
@@ -113,10 +117,15 @@ interface FormValues extends ISigningInfo {
 
 const validate = (values: FormValues) => {
   const errors: any = {};
+  if (!values.userName) {
+    errors.userName = 'Required';
+  }
   if (!values.email) {
     errors.email = 'Required';
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
     errors.email = 'Invalid email address';
+  } else if (isGmail(values.email)) {
+    errors.email = '@gmail.com is not allowed(Use Sign up with Google)';
   }
   if (!values.password) {
     errors.password = 'Required';
@@ -139,16 +148,14 @@ const CustomTextFieldComponent = ({ field, form, ...props }: FieldProps<FormValu
   />
 );
 
-const SignInForm = (props: Props) => {
+const SignUpForm = (props: Props) => {
   const {
     classes,
     authenticatedUser,
     authenticatedUserTimestamp,
     submitting,
-    authProviders,
-    onSignIn,
-    onGoPasswordReset,
-    onNavigateAfterSignedIn,
+    onSignUp,
+    onNavigateAfterSignedUp,
   } = props;
   const authenticated = Boolean(authenticatedUser);
   const avatarClassname = classNames(classes.avatar, {
@@ -156,9 +163,9 @@ const SignInForm = (props: Props) => {
   });
 
   const iv: FormValues = {
-    userName: null,
     email: '',
     password: '',
+    userName: '',
     authProvider: null,
     passwordVisibility: false,
     pseudo: authenticatedUserTimestamp || 0,
@@ -169,23 +176,18 @@ const SignInForm = (props: Props) => {
     formikActions.setSubmitting(false);
 
     const signing: ISigningInfo = {
-      userName: null,
+      userName: values.userName,
       email: values.email,
       password: values.password,
       authProvider: 'Password',
     };
-    onSignIn(signing);
-  };
-
-  const handleGoPasswordReset = (e: React.MouseEvent) => {
-    e.preventDefault();
-    onGoPasswordReset();
+    onSignUp(signing);
   };
 
   const render = (formikBag: FormikProps<FormValues>) => {
     const handleSelectProviderOrSignUp = (authProvider: AuthProvider) => (e: React.MouseEvent) => {
       const signing: ISigningInfo = {
-        userName: null,
+        userName: formikBag.values.userName,
         email: formikBag.values.email,
         password: formikBag.values.password,
         authProvider: authProvider,
@@ -193,7 +195,7 @@ const SignInForm = (props: Props) => {
       if (authProvider !== 'Password') {
         formikBag.resetForm(iv);
       }
-      onSignIn(signing);
+      onSignUp(signing);
     };
 
     const handleTogglePasswordVisibility = (e: React.MouseEvent) => {
@@ -214,7 +216,7 @@ const SignInForm = (props: Props) => {
           {submitting && <CircularProgress size={46} className={classes.fabProgress} />}
         </div>
         <Collapse in={!authenticated}>
-          <Typography variant="h6">Sign in</Typography>
+          <Typography variant="h6">Sign Up</Typography>
         </Collapse>
         <Collapse in={authenticated}>
           <Typography>
@@ -230,12 +232,12 @@ const SignInForm = (props: Props) => {
             <br />
             {authenticatedUser && `(${authenticatedUser.displayName})`}
           </Typography>
-          <Typography variant="h6">Signed in</Typography>
+          <Typography variant="h6">Signed up</Typography>
           <Button
             variant="contained"
             color="primary"
             className={classes.submit}
-            onClick={onNavigateAfterSignedIn}
+            onClick={onNavigateAfterSignedUp}
             disabled={!authenticated}
           >
             <HomeIcon className={classes.providerIcon} />
@@ -245,34 +247,34 @@ const SignInForm = (props: Props) => {
 
         <Collapse in={!authenticated}>
           <React.Fragment>
-            {authProviders.map((authProvider, idx) => {
-              return authProvider !== 'Password' ? (
-                <Button
-                  key={authProvider}
-                  type="button"
-                  fullWidth={true}
-                  variant="contained"
-                  color="primary"
-                  className={classes.provider}
-                  disabled={authenticated || submitting}
-                  onClick={handleSelectProviderOrSignUp(authProvider)}
-                >
-                  {IconUtil.renderAuthProviderIcon(authProvider, {
-                    className: classes.providerIcon,
-                  })}
-                  Sign in with &nbsp;
-                  <b>{authProvider}</b>
-                </Button>
-              ) : null;
-            })}
+            <Button
+              type="button"
+              fullWidth={true}
+              variant="contained"
+              color="secondary"
+              className={classes.provider}
+              disabled={authenticated || submitting}
+              onClick={handleSelectProviderOrSignUp('Google')}
+            >
+              {IconUtil.renderAuthProviderIcon('Google', {
+                className: classes.providerIcon,
+              })}
+              Sign up with &nbsp;
+              <b>Google</b>
+            </Button>
             <Divider className={classes.annotation} />
-            <Typography className={classes.annotation}>
-              Or, Sign in with Email &amp; Password.{' '}
-              <a href="#passwordreset" onClick={handleGoPasswordReset}>
-                Forgot password?
-              </a>
-            </Typography>
+            <Typography className={classes.annotation}>Or, Sign up with Email &amp; Password.</Typography>
             <form className={classes.form} onSubmit={formikBag.handleSubmit}>
+              <Field
+                label="User Name"
+                margin="dense"
+                required={true}
+                fullWidth={true}
+                name="userName"
+                autoComplete="userName"
+                disabled={authenticated || submitting}
+                component={CustomTextFieldComponent}
+              />
               <Field
                 label="Email Address"
                 margin="dense"
@@ -311,14 +313,15 @@ const SignInForm = (props: Props) => {
                 type="submit"
                 fullWidth={true}
                 variant="contained"
-                color="primary"
+                color="secondary"
                 className={classes.submit}
                 disabled={authenticated || submitting || !formikBag.isValid}
+                onClick={handleSelectProviderOrSignUp('Password')}
               >
                 {IconUtil.renderAuthProviderIcon('Password', {
                   className: classes.providerIcon,
                 })}
-                Sign in with Email &amp; Password
+                Sign up with Email &amp; Password
               </Button>
             </form>
           </React.Fragment>
@@ -341,4 +344,4 @@ const SignInForm = (props: Props) => {
   );
 };
 
-export default withStyles(styles)(SignInForm);
+export default withStyles(styles)(SignUpForm);

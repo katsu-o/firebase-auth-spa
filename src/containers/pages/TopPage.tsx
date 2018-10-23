@@ -61,7 +61,7 @@ class TopPage extends React.Component<Props, State> {
     const authenticated = Boolean(auth.user);
     return (
       <div className={classes.root}>
-        <Typography variant="display1" gutterBottom={true}>
+        <Typography variant="subtitle1" gutterBottom={true}>
           Welcome!
         </Typography>
         <Button
@@ -71,7 +71,16 @@ class TopPage extends React.Component<Props, State> {
           onClick={this.handleGoSignIn}
           disabled={authenticated}
         >
-          Sign in or Sign up
+          Sign in
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          className={classes.button}
+          onClick={this.handleGoSignUp}
+          disabled={authenticated}
+        >
+          Sign up
         </Button>
         {authenticated && (
           <React.Fragment>
@@ -85,6 +94,10 @@ class TopPage extends React.Component<Props, State> {
 
   private handleGoSignIn = (event: React.MouseEvent) => {
     this.props.history.push(toPublicUrl(PageName.SIGNIN));
+  };
+
+  private handleGoSignUp = (event: React.MouseEvent) => {
+    this.props.history.push(toPublicUrl(PageName.SIGNUP));
   };
 }
 

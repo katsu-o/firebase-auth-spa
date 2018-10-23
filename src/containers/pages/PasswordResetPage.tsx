@@ -6,12 +6,8 @@ import { Theme, createStyles, withStyles, WithStyles } from '@material-ui/core';
 import withRoot from '../../utilities/withRoot';
 import { createDefaultStyles } from '../../utilities/styles';
 import { authActions } from '../../actions';
-import { AuthProvider } from '../../models/AuthProvider';
-import { AUTH_AVAILABLE_PROVIDERS } from '../../constants/constants';
 import { IAuthState } from '../../reducers';
-import { SigningInfo } from '../../models/SigningInfo';
-import PageName, { toPublicUrl } from '../../constants/PageName';
-import SignInForm from '../../components/SignInForm';
+import PasswordResetForm from '../../components/PasswordResetForm';
 
 const styles = (theme: Theme) => {
   return {
@@ -46,7 +42,7 @@ interface IStateProps {
 // props set to Dispatcher
 interface IDispatchProps {
   actions: {
-    signIn: (signing: SigningInfo) => void;
+    sendPasswordResetEmail: (email: string) => void;
   };
 }
 
@@ -63,47 +59,35 @@ const mapStateToProps = (state: IStateProps, ownProps: IOwnProps): IStateProps =
 const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IOwnProps): IDispatchProps => {
   return {
     actions: {
-      signIn: (signing: SigningInfo) => dispatch(authActions.signIn.started(signing)),
+      sendPasswordResetEmail: (email: string) => dispatch(authActions.sendPasswordResetEmail.started(email)),
     },
   };
 };
 
-// 使用するプロバイダ
-const PROVIDERS = ['Password', 'Google'].concat(AUTH_AVAILABLE_PROVIDERS) as AuthProvider[];
-
-class SignInPage extends React.Component<Props, State> {
+class PasswordResetPage extends React.Component<Props, State> {
   public state: State = {};
 
   public render() {
-    const { classes, auth } = this.props;
+    const { classes } = this.props;
 
     return (
       <div className={classes.root}>
         <main className={classes.layout}>
-          <SignInForm
-            authenticatedUser={auth.user}
-            authenticatedUserTimestamp={auth.timestamp}
-            onSignIn={this.handleSignIn}
-            onGoPasswordReset={this.handleGoPasswordReset}
-            onNavigateAfterSignedIn={this.handleGoHome}
-            authProviders={PROVIDERS}
-            submitting={auth.submitting}
+          <PasswordResetForm
+            onSendPasswordResetEmail={this.handleSendPasswordResetEmail}
+            onGoBack={this.handleGoBack}
           />
         </main>
       </div>
     );
   }
 
-  private handleSignIn = (signing: SigningInfo) => {
-    this.props.actions.signIn(signing);
+  private handleSendPasswordResetEmail = (email: string) => {
+    this.props.actions.sendPasswordResetEmail(email);
   };
 
-  private handleGoHome = () => {
-    this.props.history.push(toPublicUrl(PageName.HOME));
-  };
-
-  private handleGoPasswordReset = () => {
-    this.props.history.push(toPublicUrl(PageName.PASSWORDRESET));
+  private handleGoBack = () => {
+    this.props.history.goBack();
   };
 }
 
@@ -113,7 +97,7 @@ export default withRouter(
       connect(
         mapStateToProps,
         mapDispatchToProps
-      )(SignInPage)
+      )(PasswordResetPage)
     )
   )
 );

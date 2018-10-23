@@ -8,12 +8,12 @@ import {
   Twitter as TwitterIcon,
   Help as UnknownIcon,
 } from 'mdi-material-ui';
-import { Provider, isProvider, toProvider } from '../models/Provider';
+import { AuthProvider, isAuthProvider, toAuthProvider } from '../models/AuthProvider';
 
 export default class IconUtil {
-  public static getProviderIcon = (provider: Provider): React.ComponentType<SvgIconProps> => {
+  public static getAuthProviderIcon = (authProvider: AuthProvider): React.ComponentType<SvgIconProps> => {
     let icon;
-    switch (provider) {
+    switch (authProvider) {
       case 'Password': {
         icon = EmailIcon;
         break;
@@ -42,9 +42,9 @@ export default class IconUtil {
     }
     return icon;
   };
-  public static renderProviderIcon = (provider: Provider | string, iconProps?: any): JSX.Element => {
-    const p = isProvider(provider) ? provider : toProvider(provider);
-    const ProviderIcon: React.ComponentType<SvgIconProps> = IconUtil.getProviderIcon(p);
+  public static renderAuthProviderIcon = (provider: AuthProvider | string, iconProps?: any): JSX.Element => {
+    const p = isAuthProvider(provider) ? provider : toAuthProvider(provider);
+    const ProviderIcon: React.ComponentType<SvgIconProps> = IconUtil.getAuthProviderIcon(p);
     return <ProviderIcon {...iconProps} />;
   };
 }
