@@ -6,9 +6,7 @@ const appSaga = {
   initialize: function*(action: Action<undefined>): IterableIterator<any> {
     yield put(authActions.initialize());
     yield put(appActions.clearErrors());
-  },
-  locationChange: function*(): IterableIterator<any> {
-    yield put(appActions.clearErrors());
+    yield put(appActions.clearInfos());
   },
 };
 

@@ -1,62 +1,90 @@
-import { Action, Success, Failure } from 'typescript-fsa'; // Note: not from 'redux'
+import { ActionCreator } from 'typescript-fsa'; // Note: not from 'redux'
 import { reducerWithInitialState } from 'typescript-fsa-reducers';
 import { authActions } from '../actions';
-import { SigningInfo } from '../models/SigningInfo';
 import { UserInfo } from '../models/UserInfo';
 
 export interface IAuthState {
   user: UserInfo;
   submitting: boolean;
+  timestamp: number;
 }
 const INITIAL_AUTH_STATE: IAuthState = {
   user: null,
   submitting: true,
+  timestamp: 0,
 };
 
+// async:
+//   signUp, signIn, signOut, (syncState),
+//   addLink, removeLink, updateEmail, updateProfile, updatePassword,
+//   sendPasswordResetEmail, withDraw
+// sync:
+//   stateChanged, initialize
 export const reducer = reducerWithInitialState(INITIAL_AUTH_STATE)
-  .caseWithAction(authActions.signUp.done, (state: IAuthState, action: Action<Success<SigningInfo, boolean>>) => {
-    return { ...state, submitting: false };
-  })
-  .caseWithAction(authActions.signIn.done, (state: IAuthState, action: Action<Success<SigningInfo, boolean>>) => {
-    return { ...state, submitting: false };
-  })
-  .caseWithAction(authActions.signOut.done, (state: IAuthState, action: Action<Success<undefined, boolean>>) => {
-    return { ...state, submitting: false };
-  })
-  .caseWithAction(authActions.stateChanged, (state: IAuthState, action: Action<UserInfo>) => {
+  .cases(
+    [
+      authActions.signUp.started as ActionCreator<any>,
+      authActions.signIn.started as ActionCreator<any>,
+      authActions.signOut.started as ActionCreator<any>,
+      authActions.addLink.started as ActionCreator<any>,
+      authActions.removeLink.started as ActionCreator<any>,
+      authActions.updateEmail.started as ActionCreator<any>,
+      authActions.updateProfile.started as ActionCreator<any>,
+      authActions.updatePassword.started as ActionCreator<any>,
+      authActions.sendPasswordResetEmail.started as ActionCreator<any>,
+      authActions.withdraw.started as ActionCreator<any>,
+    ],
+    (state, action) => {
+      return { ...state, submitting: true };
+    }
+  )
+  .cases(
+    [
+      authActions.signUp.done as ActionCreator<any>,
+      authActions.signUp.failed as ActionCreator<any>,
+      authActions.signIn.done as ActionCreator<any>,
+      authActions.signIn.failed as ActionCreator<any>,
+      authActions.signOut.done as ActionCreator<any>,
+      authActions.signOut.failed as ActionCreator<any>,
+      authActions.addLink.done as ActionCreator<any>,
+      authActions.addLink.failed as ActionCreator<any>,
+      authActions.removeLink.done as ActionCreator<any>,
+      authActions.removeLink.failed as ActionCreator<any>,
+      authActions.updateEmail.done as ActionCreator<any>,
+      authActions.updateEmail.failed as ActionCreator<any>,
+      authActions.updateProfile.done as ActionCreator<any>,
+      authActions.updateProfile.failed as ActionCreator<any>,
+      authActions.updatePassword.done as ActionCreator<any>,
+      authActions.updatePassword.failed as ActionCreator<any>,
+      authActions.sendPasswordResetEmail.done as ActionCreator<any>,
+      authActions.sendPasswordResetEmail.failed as ActionCreator<any>,
+      authActions.withdraw.done as ActionCreator<any>,
+      authActions.withdraw.failed as ActionCreator<any>,
+    ],
+    (state, action) => {
+      return { ...state, submitting: false };
+    }
+  )
+  .cases(
+    [
+      /* substantially unnec. */
+      // authActions.syncState.started as ActionCreator<any>,
+      // authActions.syncState.done as ActionCreator<any>,
+      // authActions.syncState.failed as ActionCreator<any>,
+    ],
+    (state, action) => {
+      return { ...state };
+    }
+  )
+  .caseWithAction(authActions.stateChanged, (state, action) => {
     return {
       ...state,
       user: action.payload,
       submitting: false,
+      timestamp: Date.now(),
     };
   })
-  .casesWithAction(
-    [authActions.signUp.started, authActions.signIn.started, authActions.signOut.started],
-    (state: IAuthState, action: Action<SigningInfo>) => {
-      return {
-        ...state,
-        submitting: true,
-      };
-    }
-  )
-  .casesWithAction(
-    [authActions.signUp.failed, authActions.signIn.failed],
-    (state: IAuthState, action: Action<Failure<SigningInfo, any>>) => {
-      console.log(action.payload.error);
-      return {
-        ...state,
-        submitting: false,
-      };
-    }
-  )
-  .casesWithAction([authActions.signOut.failed], (state: IAuthState, action: Action<Failure<undefined, any>>) => {
-    console.log(action.payload.error);
-    return {
-      ...state,
-      submitting: false,
-    };
-  })
-  .caseWithAction(authActions.initialize, (state: IAuthState, action: Action<null>) => {
+  .case(authActions.initialize, state => {
     return INITIAL_AUTH_STATE;
   });
 

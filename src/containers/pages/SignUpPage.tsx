@@ -6,12 +6,10 @@ import { Theme, createStyles, withStyles, WithStyles } from '@material-ui/core';
 import withRoot from '../../utilities/withRoot';
 import { createDefaultStyles } from '../../utilities/styles';
 import { authActions } from '../../actions';
-import { AuthProvider } from '../../models/AuthProvider';
-import { AUTH_AVAILABLE_PROVIDERS } from '../../constants/constants';
 import { IAuthState } from '../../reducers';
 import { SigningInfo } from '../../models/SigningInfo';
 import PageName, { toPublicUrl } from '../../constants/PageName';
-import SignInForm from '../../components/SignInForm';
+import SignUpForm from '../../components/SignUpForm';
 
 const styles = (theme: Theme) => {
   return {
@@ -46,7 +44,7 @@ interface IStateProps {
 // props set to Dispatcher
 interface IDispatchProps {
   actions: {
-    signIn: (signing: SigningInfo) => void;
+    signUp: (signing: SigningInfo) => void;
   };
 }
 
@@ -63,15 +61,12 @@ const mapStateToProps = (state: IStateProps, ownProps: IOwnProps): IStateProps =
 const mapDispatchToProps = (dispatch: Redux.Dispatch, ownProps: IOwnProps): IDispatchProps => {
   return {
     actions: {
-      signIn: (signing: SigningInfo) => dispatch(authActions.signIn.started(signing)),
+      signUp: (signing: SigningInfo) => dispatch(authActions.signUp.started(signing)),
     },
   };
 };
 
-// 使用するプロバイダ
-const PROVIDERS = ['Password', 'Google'].concat(AUTH_AVAILABLE_PROVIDERS) as AuthProvider[];
-
-class SignInPage extends React.Component<Props, State> {
+class SignUpPage extends React.Component<Props, State> {
   public state: State = {};
 
   public render() {
@@ -80,13 +75,11 @@ class SignInPage extends React.Component<Props, State> {
     return (
       <div className={classes.root}>
         <main className={classes.layout}>
-          <SignInForm
+          <SignUpForm
             authenticatedUser={auth.user}
             authenticatedUserTimestamp={auth.timestamp}
-            onSignIn={this.handleSignIn}
-            onGoPasswordReset={this.handleGoPasswordReset}
-            onNavigateAfterSignedIn={this.handleGoHome}
-            authProviders={PROVIDERS}
+            onSignUp={this.handleSignUp}
+            onNavigateAfterSignedUp={this.handleGoHome}
             submitting={auth.submitting}
           />
         </main>
@@ -94,16 +87,12 @@ class SignInPage extends React.Component<Props, State> {
     );
   }
 
-  private handleSignIn = (signing: SigningInfo) => {
-    this.props.actions.signIn(signing);
+  private handleSignUp = (signing: SigningInfo) => {
+    this.props.actions.signUp(signing);
   };
 
   private handleGoHome = () => {
     this.props.history.push(toPublicUrl(PageName.HOME));
-  };
-
-  private handleGoPasswordReset = () => {
-    this.props.history.push(toPublicUrl(PageName.PASSWORDRESET));
   };
 }
 
@@ -113,7 +102,7 @@ export default withRouter(
       connect(
         mapStateToProps,
         mapDispatchToProps
-      )(SignInPage)
+      )(SignUpPage)
     )
   )
 );

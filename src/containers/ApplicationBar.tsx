@@ -12,9 +12,10 @@ import {
   Menu,
   Avatar,
   Divider,
+  Fade,
+  CircularProgress,
   Theme,
   createStyles,
-  Fade,
   WithStyles,
 } from '@material-ui/core';
 import { Menu as MenuIcon, AccountCircle as AccountCircleIcon } from '@material-ui/icons';
@@ -24,6 +25,8 @@ import { authActions } from '../actions';
 import { IAuthState } from '../reducers';
 import { toProviderIds } from '../models/UserInfo';
 import IconUtil from '../utilities/IconUtil';
+import { Blink } from '../components/Blink';
+import { AUTH_EMAIL_VERIFICATION_REQUIRED } from '../constants/constants';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -43,6 +46,10 @@ const styles = (theme: Theme) =>
     providerIcon: {
       verticalAlign: 'middle',
       marginRight: theme.spacing.unit,
+    },
+    progress: {
+      marginRight: theme.spacing.unit,
+      color: theme.palette.primary.light,
     },
   });
 
@@ -93,8 +100,10 @@ class ApplicationBar extends React.Component<Props, State> {
     const { anchorElAccountMenu, anchorElGlobalMenu } = this.state;
     const openAccountMenu = Boolean(anchorElAccountMenu);
     const openGlobalMenu = Boolean(anchorElGlobalMenu);
-    const authenticatedUser = auth.user;
-    const authenticated = Boolean(authenticatedUser);
+    const authenticated = AUTH_EMAIL_VERIFICATION_REQUIRED
+      ? Boolean(auth.user && auth.user.emailVerified)
+      : Boolean(auth.user);
+
     return (
       <div className={classes.root}>
         <AppBar position="fixed">
@@ -102,9 +111,17 @@ class ApplicationBar extends React.Component<Props, State> {
             <IconButton className={classes.menuButton} color="inherit" aria-label="Menu" onClick={this.handleGoTop}>
               <Avatar className={classes.avatar}>K</Avatar>
             </IconButton>
-            <Typography variant="title" color="inherit" className={classes.grow}>
+            <Typography variant="subtitle1" color="inherit" className={classes.grow}>
               SPA Auth
             </Typography>
+            {auth.submitting && (
+              <React.Fragment>
+                <CircularProgress size={20} thickness={6} className={classes.progress} />
+                <Typography variant="subtitle1" color="inherit">
+                  <Blink>Processing...</Blink>
+                </Typography>
+              </React.Fragment>
+            )}
             <Fade in={authenticated}>
               <div style={{ display: 'inline-flex', justifyContent: 'center', alignItems: 'center' }}>
                 <IconButton
@@ -132,18 +149,20 @@ class ApplicationBar extends React.Component<Props, State> {
                   <MenuItem disabled={true}>
                     {authenticated &&
                       auth.user &&
-                      toProviderIds(auth.user.providerData()).map(providerId => {
-                        return IconUtil.renderProviderIcon(providerId, {
+                      auth.user.providerData &&
+                      toProviderIds(auth.user.providerData).map(providerId => {
+                        return IconUtil.renderAuthProviderIcon(providerId, {
                           className: classes.providerIcon,
                           key: `id-${providerId}`,
                         });
                       })}
-                    {authenticatedUser && authenticatedUser.email}
+                    {auth.user && auth.user.email}
+                    <br />
+                    {auth.user && `(${auth.user.displayName})`}
                   </MenuItem>
                   <Divider />
-                  <MenuItem onClick={this.handleGoHome}>Your home</MenuItem>
-                  <MenuItem disabled={true}>Your profile</MenuItem>
-                  <MenuItem disabled={true}>Setting</MenuItem>
+                  <MenuItem onClick={this.handleGoHome}>Home</MenuItem>
+                  <MenuItem onClick={this.handleGoSettings}>Settings</MenuItem>
                   <Divider />
                   <MenuItem onClick={this.handleDoSignOut}>Sign out</MenuItem>
                 </Menu>
@@ -174,7 +193,8 @@ class ApplicationBar extends React.Component<Props, State> {
               >
                 <MenuItem onClick={this.handleGoTop}>Top page</MenuItem>
                 <Divider />
-                <MenuItem onClick={this.handleGoSignIn}>Sign in or Sign up</MenuItem>
+                <MenuItem onClick={this.handleGoSignUp}>Sign up</MenuItem>
+                <MenuItem onClick={this.handleGoSignIn}>Sign in</MenuItem>
               </Menu>
             </div>
           </Toolbar>
@@ -208,6 +228,18 @@ class ApplicationBar extends React.Component<Props, State> {
     // Account
     this.setState({ ...this.state, anchorElAccountMenu: null });
     this.props.history.push(toPublicUrl(PageName.HOME));
+  };
+
+  private handleGoSettings = (event: React.MouseEvent) => {
+    // Account
+    this.setState({ ...this.state, anchorElAccountMenu: null });
+    this.props.history.push(toPublicUrl(PageName.SETTINGS));
+  };
+
+  private handleGoSignUp = (event: React.MouseEvent) => {
+    // Global
+    this.setState({ ...this.state, anchorElGlobalMenu: null });
+    this.props.history.push(toPublicUrl(PageName.SIGNUP));
   };
 
   private handleGoSignIn = (event: React.MouseEvent) => {

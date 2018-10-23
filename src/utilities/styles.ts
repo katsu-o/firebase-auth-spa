@@ -4,7 +4,7 @@ export const createDefaultStyles = (theme: Theme) => {
   return createStyles({
     root: {
       textAlign: 'center',
-      paddingTop: theme.spacing.unit * 9,
+      paddingTop: theme.spacing.unit * 8,
     },
   });
 };

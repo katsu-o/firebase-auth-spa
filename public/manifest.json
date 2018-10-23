@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "firebase-auth-spa",
+  "name": "Firebase Authentication Example",
   "icons": [
     {
       "src": "favicon.ico",

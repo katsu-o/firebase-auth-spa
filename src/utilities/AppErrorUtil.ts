@@ -2,7 +2,7 @@ import { IAppError } from '../models/AppError';
 import { isIAuthError } from '../models/AuthError';
 import { Severity } from '../models/Severity';
 
-export default class ErrorUtil {
+export default class AppErrorUtil {
   public static createAppError = (
     obj: { code: string; message: string; name?: string; stack?: string },
     severity: Severity = Severity.WARNING
@@ -23,7 +23,7 @@ export default class ErrorUtil {
   ): IAppError => {
     const code = isIAuthError(error) ? error.code : 'unknown';
     const message = isIAuthError(error) ? error.message : 'unexpected error occurred.';
-    const appError: IAppError = ErrorUtil.createAppError(
+    const appError: IAppError = AppErrorUtil.createAppError(
       {
         code: code,
         message: message,

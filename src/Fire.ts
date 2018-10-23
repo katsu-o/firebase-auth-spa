@@ -1,6 +1,6 @@
 // tslint:disable object-literal-sort-keys
 import firebase from 'firebase';
-import { Provider } from './models/Provider';
+import { AuthProvider } from './models/AuthProvider';
 
 const config = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -11,11 +11,12 @@ const config = {
   messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENSER_ID,
 };
 const fire = firebase.initializeApp(config);
-export const authProviders = new Map<Provider, firebase.auth.AuthProvider>([
+export const authProviders = new Map<AuthProvider, firebase.auth.AuthProvider>([
   ['Password', new firebase.auth.EmailAuthProvider()],
   ['Google', new firebase.auth.GoogleAuthProvider()],
   ['GitHub', new firebase.auth.GithubAuthProvider()],
   ['Facebook', new firebase.auth.FacebookAuthProvider()],
   ['Twitter', new firebase.auth.TwitterAuthProvider()],
 ]);
+export const emailAuthProvider = firebase.auth.EmailAuthProvider; // パスワード認証追加時に必要
 export default fire;
