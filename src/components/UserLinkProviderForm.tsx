@@ -34,8 +34,6 @@ import { AuthProvider } from '../models/AuthProvider';
 import AuthUtil from '../utilities/AuthUtil';
 import IconUtil from '../utilities/IconUtil';
 
-// import fire from '../Fire';
-
 const styles = (theme: Theme) =>
   createStyles({
     paper: {

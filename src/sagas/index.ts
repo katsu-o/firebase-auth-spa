@@ -1,10 +1,10 @@
-import { takeEvery, takeLatest } from 'redux-saga/effects';
+import { takeEvery, takeLatest, all } from 'redux-saga/effects';
 import { ActionTypes } from '../actions';
 import appSaga from './app';
 import authSaga from './auth';
 
 export default function* rootSaga(): IterableIterator<any> {
-  yield [
+  yield all([
     takeLatest(ActionTypes.APP_INITIALIZE, appSaga.initialize),
 
     takeEvery(`${ActionTypes.AUTH_SIGN_UP}_STARTED`, authSaga.signUp),
@@ -19,5 +19,5 @@ export default function* rootSaga(): IterableIterator<any> {
     takeEvery(`${ActionTypes.AUTH_UPDATE_PASSWORD}_STARTED`, authSaga.updatePassword),
     takeEvery(`${ActionTypes.AUTH_SEND_PASSWORD_RESET_EMAIL}_STARTED`, authSaga.sendPasswordResetEmail),
     takeEvery(`${ActionTypes.AUTH_WITHDRAW}_STARTED`, authSaga.withdraw),
-  ];
+  ]);
 }
