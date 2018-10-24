@@ -61,6 +61,7 @@ const styles = (theme: Theme) =>
 interface IOwnProps extends WithStyles<typeof styles> {
   onSendPasswordResetEmail: (email: string) => void;
   onGoBack: () => void;
+  submitting?: boolean;
 }
 
 // local state of this component
@@ -112,7 +113,7 @@ const CustomCheckboxComponent = ({ field, form, ...props }: FieldProps<FormValue
 );
 
 const PasswordResetForm = (props: Props) => {
-  const { classes, onSendPasswordResetEmail, onGoBack } = props;
+  const { classes, onSendPasswordResetEmail, onGoBack, submitting } = props;
 
   const iv: FormValues = {
     confirmed: false,
@@ -141,9 +142,11 @@ const PasswordResetForm = (props: Props) => {
           <Typography className={classes.annotation}>
             Enter your email address and click [Send Password Reset Email]. We will send you a link to reset your
             password.{' '}
-            <a href="#goback" onClick={handleGoBack}>
-              Go Back
-            </a>
+            {!submitting && (
+              <a href="#goback" onClick={handleGoBack}>
+                Go Back
+              </a>
+            )}
           </Typography>
           <form className={classes.form} onSubmit={formikBag.handleSubmit}>
             <Field

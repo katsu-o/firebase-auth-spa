@@ -12,7 +12,6 @@ import {
   WithStyles,
   withStyles,
 } from '@material-ui/core';
-// import { red } from '@material-ui/core/colors';
 import { DeleteForever as DeleteForeverIcon } from '@material-ui/icons';
 import { Formik, FormikProps, FormikActions, Field, FieldProps } from 'formik';
 // import Yup from 'yup';

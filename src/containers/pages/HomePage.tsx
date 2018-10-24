@@ -46,7 +46,6 @@ class HomePage extends React.Component<Props, State> {
 
   public render() {
     const { auth } = this.props;
-    const email = auth && auth.user ? auth.user.email : '';
 
     return (
       <div className={this.props.classes.root}>
@@ -54,7 +53,8 @@ class HomePage extends React.Component<Props, State> {
           Home
         </Typography>
         <Typography variant="subheading" gutterBottom={true}>
-          Hi, {email}
+          Hi, {auth.user && auth.user.email}
+          {auth.user && `(${auth.user.displayName})`}
         </Typography>
       </div>
     );

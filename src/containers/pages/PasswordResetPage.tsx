@@ -68,7 +68,7 @@ class PasswordResetPage extends React.Component<Props, State> {
   public state: State = {};
 
   public render() {
-    const { classes } = this.props;
+    const { classes, auth } = this.props;
 
     return (
       <div className={classes.root}>
@@ -76,6 +76,7 @@ class PasswordResetPage extends React.Component<Props, State> {
           <PasswordResetForm
             onSendPasswordResetEmail={this.handleSendPasswordResetEmail}
             onGoBack={this.handleGoBack}
+            submitting={auth.submitting}
           />
         </main>
       </div>

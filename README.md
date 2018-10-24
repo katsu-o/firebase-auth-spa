@@ -25,10 +25,10 @@ This app(SPA) is created using React with TypeScript, scaffolding by CRA(create-
 
 (confirmed version)
 
-- Node >= 10.7.0
-- npm >= 6.1.0
+- Node >= 10.12.0
+- npm >= 6.4.1
 - yarn >= 1.10.1 -> _not required but recommended(when using npm, please read as appropriate)_
-- firebase-tools >= 4.2.1
+- firebase-tools >= 5.1.1
 
 ## Installation
 

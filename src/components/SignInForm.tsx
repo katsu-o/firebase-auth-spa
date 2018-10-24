@@ -268,9 +268,11 @@ const SignInForm = (props: Props) => {
             <Divider className={classes.annotation} />
             <Typography className={classes.annotation}>
               Or, Sign in with Email &amp; Password.{' '}
-              <a href="#passwordreset" onClick={handleGoPasswordReset}>
-                Forgot password?
-              </a>
+              {!submitting && (
+                <a href="#passwordreset" onClick={handleGoPasswordReset}>
+                  Forgot password?
+                </a>
+              )}
             </Typography>
             <form className={classes.form} onSubmit={formikBag.handleSubmit}>
               <Field

@@ -1,5 +1,7 @@
-// tslint:disable object-literal-sort-keys
-import firebase from 'firebase';
+// tslint:disable object-literal-sort-keys no-submodule-imports
+import * as firebase from 'firebase/app';
+import 'firebase/auth';
+
 import { AuthProvider } from './models/AuthProvider';
 
 const config = {

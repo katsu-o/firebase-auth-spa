@@ -195,7 +195,6 @@ class ApplicationManager extends React.Component<Props, State> {
     // onAuthStateChanged
     // 公式: signInWithRedirect を使用する場合、onAuthStateChanged オブザーバーは getRedirectResult が解決された後にトリガーされます。
     // - つまり認証状態はここで見ていればよい。
-    // fire.auth().onIdTokenChanged(
     fire.auth().onAuthStateChanged(
       (user: firebase.User) => {
         console.log(user ? 'User is signed in.' : 'User is NOT signed in.');
@@ -245,7 +244,7 @@ class ApplicationManager extends React.Component<Props, State> {
     // 前画面からリダイレクト系処理(signInWithRedirect() や linkWithRedirect() など)を経てきた場合、
     // onAuthStateChanged() に先んじて、この処理が実行される。
     (async () => {
-      // sessionStorage から ridirect 前の認証アクションを取得(その後クリア)
+      // sessionStorage から ridirect 前の認証アクションを取得(その後 sessionStorage をクリア)
       const authAction = SessionStorageAccessor.getAuthAction();
       SessionStorageAccessor.setAuthAction(null);
 
