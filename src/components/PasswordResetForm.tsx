@@ -15,6 +15,7 @@ import {
 import { Send as SendIcon } from '@material-ui/icons';
 import { Formik, FormikProps, FormikActions, Field, FieldProps } from 'formik';
 // import Yup from 'yup';
+import { isValidEmail, isGmail } from '../utilities/misc';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -83,8 +84,15 @@ const validate = (values: FormValues) => {
   }
   if (!values.email) {
     errors.email = 'Required';
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+  } else if (!isValidEmail(values.email)) {
     errors.email = 'Invalid email address';
+  } else if (isGmail(values.email)) {
+    // パスワードリセットメールのリンクからパスワードを変更すると、
+    // そのアカウントに紐づく認証プロバイダは Email & Password 以外全て解除される。
+    // つまり @gmail.com でありながら Google 認証が存在しないアカウントとなる。
+    // この状態で再度 Google 認証で Sign In すると Google 認証が勝手に紐づいてしまうため、これを避ける。
+    // 運用ポリシー: Sign In でプロバイダ認証の追加はさせない。
+    errors.email = '@gmail.com is not allowed(It should be able to Sign In with Google)';
   }
   return errors;
 };

@@ -33,6 +33,7 @@ import { UserInfo } from '../models/UserInfo';
 import { AuthProvider } from '../models/AuthProvider';
 import AuthUtil from '../utilities/AuthUtil';
 import IconUtil from '../utilities/IconUtil';
+import { isGmail } from '../utilities/misc';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -199,8 +200,33 @@ const UserLinkProviderForm = (props: Props) => {
 
   const render = (formikBag: FormikProps<FormValues>) => {
     const { selectedAuthProvider } = formikBag.values;
-    const hasMultipleProviderLinks =
-      authenticatedUser && authenticatedUser.providerData ? authenticatedUser.providerData.length > 1 : false;
+
+    // リンク済みの認証プロバイダが 1 つかどうか
+    const isOnlyOneProviderLink =
+      authenticatedUser && authenticatedUser.providerData ? authenticatedUser.providerData.length === 1 : false;
+
+    // 辻褄の合わないアカウントとして更新しようとしているか否か
+    // ※仮にこれで更新すると、@gmail.com でありながら Google 認証が存在しないアカウントとなる。
+    //   この状態で再度 Google 認証で Sign In すると Google 認証が勝手に紐づいてしまうため、これを避ける。
+    //   運用ポリシー: Sign In でプロバイダ認証の追加はさせない。
+    // 1. リンク済みの Gmail 認証を選択している
+    // 2. アカウントの Email アドレスが @gmail.com
+    const isInconsistentAccountToBeUpdated =
+      selectedAuthProvider === 'Google' &&
+      AuthUtil.isLinkedAuthProvider(authenticatedUser, 'Google') &&
+      (authenticatedUser && authenticatedUser.email && isGmail(authenticatedUser.email))
+        ? true
+        : false;
+
+    // リンク解除禁止是非
+    const isRemoveLinkBanned = isOnlyOneProviderLink || isInconsistentAccountToBeUpdated;
+
+    // リンク解除を禁止する場合のメッセージ
+    const bannedReason = isOnlyOneProviderLink
+      ? 'Since it is the last one, can not be deleted.'
+      : isInconsistentAccountToBeUpdated
+        ? "If the account's email address is @gmail.com, you can not cancel Google authentication."
+        : '';
 
     const handleTogglePasswordVisibility = (e: React.MouseEvent) => {
       formikBag.setFieldValue('passwordVisibility', !formikBag.values.passwordVisibility);
@@ -319,11 +345,10 @@ const UserLinkProviderForm = (props: Props) => {
           </Grid>
           <Grid container={true} direction="row" justify="flex-end" alignItems="center">
             {selectedAuthProvider &&
-              AuthUtil.isLinkedAuthProvider(authenticatedUser, selectedAuthProvider) &&
-              !hasMultipleProviderLinks && (
+              isRemoveLinkBanned && (
                 <Grid item={true}>
                   <Typography variant="caption" className={classes.bannedReason}>
-                    Since it is the last one, can not be deleted.
+                    {bannedReason}
                   </Typography>
                 </Grid>
               )}
@@ -340,9 +365,7 @@ const UserLinkProviderForm = (props: Props) => {
                   !formikBag.isValid ||
                   disabled ||
                   !selectedAuthProvider ||
-                  (selectedAuthProvider &&
-                    AuthUtil.isLinkedAuthProvider(authenticatedUser, selectedAuthProvider) &&
-                    !hasMultipleProviderLinks)
+                  (selectedAuthProvider && isRemoveLinkBanned)
                 }
                 onClick={formikBag.submitForm}
               >

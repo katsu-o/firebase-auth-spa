@@ -17,7 +17,7 @@ import { Formik, FormikProps, FormikActions, Field, FieldProps } from 'formik';
 // import Yup from 'yup';
 import { UserInfo } from '../models/UserInfo';
 import AuthUtil from '../utilities/AuthUtil';
-import { isGmail } from '../utilities/misc';
+import { isValidEmail, isGmail } from '../utilities/misc';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -83,14 +83,14 @@ const validate = (authenticatedUser: UserInfo) => (values: FormValues) => {
   const errors: any = {};
   if (!values.email) {
     errors.email = 'Required';
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+  } else if (!isValidEmail(values.email)) {
     errors.email = 'Invalid email address';
   } else if (isGmail(values.email)) {
     // このユーザーのプロバイダに Google が含まれていた場合に限り、その gmail アドレスへの変更のみ許可。
     if (AuthUtil.isLinkedAuthProvider(authenticatedUser, 'Google')) {
       const google = AuthUtil.getAuthProviderUserInfo(authenticatedUser, 'Google');
       if (google && google.email !== values.email) {
-        errors.email = `Changes to @gmail.com are possible only for ${google.email}`;
+        errors.email = `Changing to @gmail.com is possible only for ${google.email}`;
       }
     } else {
       errors.email = '@gmail.com is not allowed';
