@@ -31,6 +31,7 @@ import { ISigningInfo } from '../models/SigningInfo';
 import { UserInfo, toProviderIds } from '../models/UserInfo';
 import { AuthProvider } from '../models/AuthProvider';
 import IconUtil from '../utilities/IconUtil';
+import { isValidEmail } from '../utilities/misc';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -115,7 +116,7 @@ const validate = (values: FormValues) => {
   const errors: any = {};
   if (!values.email) {
     errors.email = 'Required';
-  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+  } else if (!isValidEmail(values.email)) {
     errors.email = 'Invalid email address';
   }
   if (!values.password) {
@@ -228,7 +229,7 @@ const SignInForm = (props: Props) => {
               })}
             {authenticatedUser && authenticatedUser.email}
             <br />
-            {authenticatedUser && `(${authenticatedUser.displayName})`}
+            {authenticatedUser && `(${authenticatedUser.displayName || ''})`}
           </Typography>
           <Typography variant="h6">Signed in</Typography>
           <Button

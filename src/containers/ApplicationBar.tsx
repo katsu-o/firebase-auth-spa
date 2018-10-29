@@ -158,7 +158,7 @@ class ApplicationBar extends React.Component<Props, State> {
                       })}
                     {auth.user && auth.user.email}
                     <br />
-                    {auth.user && `(${auth.user.displayName})`}
+                    {auth.user && `(${auth.user.displayName || ''})`}
                   </MenuItem>
                   <Divider />
                   <MenuItem onClick={this.handleGoHome}>Home</MenuItem>
